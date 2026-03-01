@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash Talk / Гайдлайн</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --surface: #111;
+            --accent: #ff3333;
+            --accent2: #ff9900;
+            --accent3: #00ffaa;
+            --text: #f0ede8;
+            --muted: #555;
+            --border: #222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            cursor: crosshair;
+        }
+
+        /* Noise overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px 60px 40px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .hero-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .hero-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(100px, 18vw, 240px);
+            line-height: 0.88;
+            letter-spacing: -2px;
+            color: var(--text);
+            animation: fadeUp 0.8s 0.1s ease both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            display: block;
+        }
+
+        .hero-sub {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            color: var(--muted);
+            margin-top: 32px;
+            max-width: 480px;
+            line-height: 1.7;
+            animation: fadeUp 0.8s 0.2s ease both;
+        }
+
+        .hero-deco {
+            position: absolute;
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 320px;
+            color: transparent;
+            -webkit-text-stroke: 1px #1a1a1a;
+            pointer-events: none;
+            user-select: none;
+            animation: drift 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateY(-50%) translateX(0);
+            }
+
+            to {
+                transform: translateY(-50%) translateX(-20px);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 32px;
+            left: 60px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            text-transform: uppercase;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0.2;
+            }
+        }
+
+        /* LAYOUT */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 60px;
+        }
+
+        section {
+            padding: 100px 60px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-label {
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: var(--accent);
+            text-transform: uppercase;
+            margin-bottom: 48px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(48px, 6vw, 80px);
+            line-height: 1;
+            margin-bottom: 48px;
+        }
+
+        /* SPECTRUM VIZ */
+        .spectrum {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+            margin: 48px 0;
+        }
+
+        .spectrum-item {
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .spectrum-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--border);
+        }
+
+        .spectrum-item.lvl1 {
+            background: #0d1a0d;
+        }
+
+        .spectrum-item.lvl2 {
+            background: #1a1a0d;
+        }
+
+        .spectrum-item.lvl3 {
+            background: #1a0d00;
+        }
+
+        .spectrum-item.lvl4 {
+            background: #1a0505;
+        }
+
+        .spectrum-item.lvl5 {
+            background: #1a0000;
+        }
+
+        .spectrum-num {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            line-height: 1;
+        }
+
+        .lvl1 .spectrum-num {
+            color: var(--accent3);
+        }
+
+        .lvl2 .spectrum-num {
+            color: #aaff00;
+        }
+
+        .lvl3 .spectrum-num {
+            color: var(--accent2);
+        }
+
+        .lvl4 .spectrum-num {
+            color: #ff6600;
+        }
+
+        .lvl5 .spectrum-num {
+            color: var(--accent);
+        }
+
+        .spectrum-name {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .spectrum-desc {
+            font-size: 11px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .spectrum-bar {
+            height: 3px;
+            border-radius: 2px;
+            margin-top: auto;
+        }
+
+        .lvl1 .spectrum-bar {
+            background: var(--accent3);
+            width: 20%;
+        }
+
+        .lvl2 .spectrum-bar {
+            background: #aaff00;
+            width: 40%;
+        }
+
+        .lvl3 .spectrum-bar {
+            background: var(--accent2);
+            width: 60%;
+        }
+
+        .lvl4 .spectrum-bar {
+            background: #ff6600;
+            width: 80%;
+        }
+
+        .lvl5 .spectrum-bar {
+            background: var(--accent);
+            width: 100%;
+        }
+
+        /* RULES GRID */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            margin-top: 48px;
+        }
+
+        .rule-card {
+            padding: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+
+        .rule-card:hover {
+            background: #161616;
+        }
+
+        .rule-card::before {
+            content: attr(data-num);
+            position: absolute;
+            right: 24px;
+            top: 16px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 80px;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+
+        .rule-type {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            padding: 4px 10px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .type-do {
+            background: rgba(0, 255, 170, 0.1);
+            color: var(--accent3);
+        }
+
+        .type-dont {
+            background: rgba(255, 51, 51, 0.1);
+            color: var(--accent);
+        }
+
+        .type-context {
+            background: rgba(255, 153, 0, 0.1);
+            color: var(--accent2);
+        }
+
+        .rule-title {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .rule-text {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #888;
+        }
+
+        .rule-example {
+            margin-top: 20px;
+            padding: 16px;
+            background: #0d0d0d;
+            border-left: 2px solid var(--muted);
+            font-size: 12px;
+            font-style: italic;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .rule-example.good {
+            border-color: var(--accent3);
+            color: #aaa;
+        }
+
+        .rule-example.bad {
+            border-color: var(--accent);
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        /* TARGETS */
+        .targets-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-top: 48px;
+        }
+
+        .target-card {
+            padding: 32px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .target-icon {
+            font-size: 36px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .target-label {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .target-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .target-tag {
+            display: inline-block;
+            margin-top: 16px;
+            font-size: 9px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 3px 8px;
+        }
+
+        /* TIMING */
+        .timing-viz {
+            margin-top: 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timing-row {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            align-items: center;
+            gap: 24px;
+            padding: 20px 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .timing-row:hover {
+            background: #161616;
+        }
+
+        .timing-label {
+            font-size: 12px;
+            color: var(--text);
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+        }
+
+        .timing-bar-wrap {
+            height: 6px;
+            background: #1a1a1a;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timing-bar {
+            height: 100%;
+            border-radius: 3px;
+            animation: grow 1.2s ease both;
+        }
+
+        @keyframes grow {
+            from {
+                width: 0;
+            }
+        }
+
+        .timing-badge {
+            font-size: 10px;
+            letter-spacing: 2px;
+            padding: 4px 10px;
+            border-radius: 2px;
+            white-space: nowrap;
+        }
+
+        .badge-green {
+            background: rgba(0, 255, 170, 0.1);
+            color: var(--accent3);
+        }
+
+        .badge-yellow {
+            background: rgba(255, 153, 0, 0.1);
+            color: var(--accent2);
+        }
+
+        .badge-red {
+            background: rgba(255, 51, 51, 0.1);
+            color: var(--accent);
+        }
+
+        /* EXAMPLES */
+        .examples-wrap {
+            margin-top: 48px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .example-block {
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .example-header {
+            padding: 12px 20px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .example-header.good {
+            background: rgba(0, 255, 170, 0.05);
+            color: var(--accent3);
+            border-bottom: 1px solid rgba(0, 255, 170, 0.1);
+        }
+
+        .example-header.bad {
+            background: rgba(255, 51, 51, 0.05);
+            color: var(--accent);
+            border-bottom: 1px solid rgba(255, 51, 51, 0.1);
+        }
+
+        .example-list {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .example-item {
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 12px 16px;
+            background: #0d0d0d;
+            border-left: 2px solid transparent;
+            font-style: italic;
+            color: #aaa;
+        }
+
+        .example-item.good {
+            border-color: var(--accent3);
+        }
+
+        .example-item.bad {
+            border-color: var(--accent);
+            color: #666;
+        }
+
+        /* MINDSET */
+        .mindset-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            margin-top: 48px;
+        }
+
+        .mindset-card {
+            padding: 40px 32px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .mindset-icon {
+            font-size: 48px;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .mindset-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .mindset-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-brand {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--muted);
+        }
+
+        .footer-note {
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        /* INTERACTIVE HOVER lines */
+        .line-accent {
+            display: inline-block;
+            position: relative;
+        }
+
+        .line-accent::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 40px 24px;
+            }
+
+            section {
+                padding: 60px 24px;
+            }
+
+            .hero-deco {
+                display: none;
+            }
+
+            .spectrum {
+                grid-template-columns: 1fr;
+            }
+
+            .rules-grid,
+            .examples-wrap,
+            .mindset-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .targets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timing-row {
+                grid-template-columns: 1fr;
+            }
+
+            footer {
+                padding: 40px 24px;
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <p class="hero-tag">// Полный гайдлайн / 2026</p>
+        <h1 class="hero-title">
+            TRASH<span>TALK</span>
+        </h1>
+        <p class="hero-sub">Искусство словесного поединка. Как говорить так, чтобы это было остро, честно и работало на
+            твою игру — а не против тебя.</p>
+        <div class="hero-deco">TT</div>
+        <p class="scroll-hint">▼ Scroll to explore</p>
+    </section>
+
+    <!-- SPECTRUM -->
+    <section>
+        <p class="section-label">01 / Спектр трештока</p>
+        <h2 class="section-title">5 УРОВНЕЙ<br>ИНТЕНСИВНОСТИ</h2>
+        <p style="color:var(--muted); font-size:13px; max-width:600px; line-height:1.8; margin-bottom:48px;">
+            Трештолк — это не одно действие, а целый спектр. Понимание уровней помогает выбрать правильное давление в
+            нужный момент.
+        </p>
+
+        <div class="spectrum">
+            <div class="spectrum-item lvl1">
+                <span class="spectrum-num">01</span>
+                <span class="spectrum-name">ПСИХОЛОГИЧЕСКИЙ</span>
+                <p class="spectrum-desc">Уверенность в теле, взгляд, пауза. Давление без слов.</p>
+                <div class="spectrum-bar"></div>
+            </div>
+            <div class="spectrum-item lvl2">
+                <span class="spectrum-num">02</span>
+                <span class="spectrum-name">ЛЁГКИЙ ДЖАБ</span>
+                <p class="spectrum-desc">Комплимент наоборот. Безобидно, но задевает.</p>
+                <div class="spectrum-bar"></div>
+            </div>
+            <div class="spectrum-item lvl3">
+                <span class="spectrum-num">03</span>
+                <span class="spectrum-name">ПРОВОКАЦИЯ</span>
+                <p class="spectrum-desc">Атака на стиль игры, решения, слабые места.</p>
+                <div class="spectrum-bar"></div>
+            </div>
+            <div class="spectrum-item lvl4">
+                <span class="spectrum-num">04</span>
+                <span class="spectrum-name">АГРЕССИЯ</span>
+                <p class="spectrum-desc">Прямой вызов. Высокий риск, высокий эффект.</p>
+                <div class="spectrum-bar"></div>
+            </div>
+            <div class="spectrum-item lvl5">
+                <span class="spectrum-num">05</span>
+                <span class="spectrum-name">ЯДЕРНЫЙ</span>
+                <p class="spectrum-desc">Последний аргумент. Используй только если готов к последствиям.</p>
+                <div class="spectrum-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- RULES -->
+    <section>
+        <p class="section-label">02 / Правила игры</p>
+        <h2 class="section-title">КОД<br>ТРЕШТОЛКА</h2>
+
+        <div class="rules-grid">
+            <div class="rule-card" data-num="01">
+                <span class="rule-type type-do">✓ DO</span>
+                <h3 class="rule-title">Атакуй игру, не человека</h3>
+                <p class="rule-text">Трештолк — это давление на соперника как игрока, а не как личность. Критикуй
+                    решения, стиль, ошибки — но не личные качества вне площадки.</p>
+                <div class="rule-example good">«Ты слишком предсказуем сегодня. Я читаю каждый твой ход заранее.»</div>
+            </div>
+
+            <div class="rule-card" data-num="02">
+                <span class="rule-type type-dont">✗ DONT</span>
+                <h3 class="rule-title">Никаких переходов на личное</h3>
+                <p class="rule-text">Семья, внешность, происхождение, личная жизнь — табу. Это не трештолк, это абьюз.
+                    Разница принципиальная и за ней — твоя репутация.</p>
+                <div class="rule-example bad">Атаки на внешний вид, родственников, личную жизнь</div>
+            </div>
+
+            <div class="rule-card" data-num="03">
+                <span class="rule-type type-do">✓ DO</span>
+                <h3 class="rule-title">Используй факты и статистику</h3>
+                <p class="rule-text">Самый сильный трештолк основан на реальности. Цифры, конкретные промахи, паттерны —
+                    это непробиваемо. Оппонент не может отрицать то, что было.</p>
+                <div class="rule-example good">«Ты потерял мяч 3 раза в этой четверти. Просто фиксирую.»</div>
+            </div>
+
+            <div class="rule-card" data-num="04">
+                <span class="rule-type type-context">◈ CONTEXT</span>
+                <h3 class="rule-title">Читай момент</h3>
+                <p class="rule-text">Трештолк работает только в нужный момент. Когда соперник ошибся — самое время.
+                    Когда он на подъёме — лучше молчи. Неуместный трештолк звучит как страх.</p>
+                <div class="rule-example">Тайминг решает всё. Молчание после его промаха говорит больше слов.</div>
+            </div>
+
+            <div class="rule-card" data-num="05">
+                <span class="rule-type type-do">✓ DO</span>
+                <h3 class="rule-title">Будь готов подтвердить делом</h3>
+                <p class="rule-text">Пустые слова без результата — антитрештолк. Говоришь что выиграешь — выигрывай.
+                    Каждый раз, когда не подтверждаешь, теряешь силу.</p>
+                <div class="rule-example good">Трештолк Мухаммеда Али работал потому, что за ним всегда стоял результат.
+                </div>
+            </div>
+
+            <div class="rule-card" data-num="06">
+                <span class="rule-type type-dont">✗ DONT</span>
+                <h3 class="rule-title">Не реагируй на каждый укол</h3>
+                <p class="rule-text">Лучший ответ на трештолк — игра. Если ты реагируешь эмоционально на каждую
+                    провокацию, соперник получает контроль над твоей головой. Игнор убивает.</p>
+                <div class="rule-example bad">Длинные оправдания в ответ на провокацию = ты проиграл диалог</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TARGETS -->
+    <section>
+        <p class="section-label">03 / Точки удара</p>
+        <h2 class="section-title">КУДА<br>БИТЬ</h2>
+
+        <div class="targets-grid">
+            <div class="target-card">
+                <span class="target-icon">🎯</span>
+                <h3 class="target-label">УВЕРЕННОСТЬ</h3>
+                <p class="target-text">Самая чувствительная точка. Заставь соперника усомниться в правильности своих
+                    решений. Когда он начинает думать дважды — ты уже выигрываешь.</p>
+                <span class="target-tag">ПСИХОЛОГИЧЕСКИ</span>
+            </div>
+
+            <div class="target-card">
+                <span class="target-icon">🔄</span>
+                <h3 class="target-label">ПАТТЕРНЫ</h3>
+                <p class="target-text">Укажи на повторяющиеся ошибки. Когда человек понимает, что ты его читаешь — он
+                    начинает меняться, ломает ритм, теряет себя.</p>
+                <span class="target-tag">ТАКТИЧЕСКИ</span>
+            </div>
+
+            <div class="target-card">
+                <span class="target-icon">⏱️</span>
+                <h3 class="target-label">ДАВЛЕНИЕ ВРЕМЕНИ</h3>
+                <p class="target-text">«Ты уже устаёшь» или «ещё два часа» — напоминание о физическом и временном
+                    ресурсе. Особенно эффективно в конце долгой игры.</p>
+                <span class="target-tag">ФИЗИЧЕСКИ</span>
+            </div>
+
+            <div class="target-card">
+                <span class="target-icon">📊</span>
+                <h3 class="target-label">ИСТОРИЯ</h3>
+                <p class="target-text">Прошлые проигрыши, прошлые ошибки — живые факты. Используй только реальные
+                    события, не выдумывай — это проверяется.</p>
+                <span class="target-tag">ИСТОРИЧЕСКИ</span>
+            </div>
+
+            <div class="target-card">
+                <span class="target-icon">👥</span>
+                <h3 class="target-label">РЕПУТАЦИЯ</h3>
+                <p class="target-text">«Все ожидали большего от тебя сегодня». Давление через чужие ожидания. Работает
+                    только если у соперника есть что терять.</p>
+                <span class="target-tag">СОЦИАЛЬНО</span>
+            </div>
+
+            <div class="target-card">
+                <span class="target-icon">🧠</span>
+                <h3 class="target-label">СТРЕСС-ТОЧКИ</h3>
+                <p class="target-text">Знай своего соперника. Что его заводит? Что он боится? Работай в эту зону — но
+                    осторожно, это требует понимания человека.</p>
+                <span class="target-tag">ПЕРСОНАЛЬНО</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMING -->
+    <section>
+        <p class="section-label">04 / Тайминг</p>
+        <h2 class="section-title">КОГДА<br>ГОВОРИТЬ</h2>
+
+        <div class="timing-viz">
+            <div class="timing-row">
+                <span class="timing-label">После его ошибки</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:95%; background: var(--accent3);"></div>
+                </div>
+                <span class="timing-badge badge-green">ИДЕАЛЬНО</span>
+            </div>
+            <div class="timing-row">
+                <span class="timing-label">До начала игры</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:80%; background: var(--accent3);"></div>
+                </div>
+                <span class="timing-badge badge-green">СИЛЬНО</span>
+            </div>
+            <div class="timing-row">
+                <span class="timing-label">Во время паузы</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:65%; background: #aaff00;"></div>
+                </div>
+                <span class="timing-badge badge-green">ХОРОШО</span>
+            </div>
+            <div class="timing-row">
+                <span class="timing-label">Когда он на подъёме</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:25%; background: var(--accent2);"></div>
+                </div>
+                <span class="timing-badge badge-yellow">РИСКОВАННО</span>
+            </div>
+            <div class="timing-row">
+                <span class="timing-label">После своей ошибки</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:10%; background: var(--accent);"></div>
+                </div>
+                <span class="timing-badge badge-red">ОПАСНО</span>
+            </div>
+            <div class="timing-row">
+                <span class="timing-label">Без повода, постоянно</span>
+                <div class="timing-bar-wrap">
+                    <div class="timing-bar" style="width:5%; background: var(--accent);"></div>
+                </div>
+                <span class="timing-badge badge-red">НИКОГДА</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXAMPLES -->
+    <section>
+        <p class="section-label">05 / Примеры</p>
+        <h2 class="section-title">ЧТО ГОВОРИТЬ<br>И КАК</h2>
+
+        <div class="examples-wrap">
+            <div class="example-block">
+                <div class="example-header good">✓ Работающие фразы</div>
+                <div class="example-list">
+                    <div class="example-item good">«Ты сегодня медленнее чем обычно. Что-то случилось?»</div>
+                    <div class="example-item good">«Интересно, ты снова сделал то же самое. Я уже знаю твой следующий
+                        ход.»</div>
+                    <div class="example-item good">«Хорошая попытка. Но мне нужно больше.»</div>
+                    <div class="example-item good">«Ещё час такой игры. Ты выдержишь?»</div>
+                    <div class="example-item good">«Молча улыбнуться после его промаха.»</div>
+                </div>
+            </div>
+
+            <div class="example-block">
+                <div class="example-header bad">✗ Что не работает</div>
+                <div class="example-list">
+                    <div class="example-item bad">«Ты вообще умеешь играть?» — слишком тупо, без конкретики</div>
+                    <div class="example-item bad">Оскорбления внешности, семьи, национальности</div>
+                    <div class="example-item bad">«Я тебя уничтожу!» — без доказательств = пустой звук</div>
+                    <div class="example-item bad">Трештолк когда сам проигрываешь — это катастрофа</div>
+                    <div class="example-item bad">Повторять одно и то же — теряет силу с каждым разом</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MINDSET -->
+    <section>
+        <p class="section-label">06 / Майндсет</p>
+        <h2 class="section-title">ФИЛОСОФИЯ<br>ИГРЫ</h2>
+
+        <div class="mindset-grid">
+            <div class="mindset-card">
+                <span class="mindset-icon">🧊</span>
+                <h3 class="mindset-title">ХОЛОД</h3>
+                <p class="mindset-text">Лучший трештолкер всегда спокойнее оппонента. Эмоции — слабость. Контроль —
+                    сила.</p>
+            </div>
+            <div class="mindset-card">
+                <span class="mindset-icon">🎭</span>
+                <h3 class="mindset-title">ТЕАТР</h3>
+                <p class="mindset-text">Трештолк — это перформанс. Играй уверенного человека, и скоро станешь им.</p>
+            </div>
+            <div class="mindset-card">
+                <span class="mindset-icon">⚡</span>
+                <h3 class="mindset-title">ЭКОНОМИЯ</h3>
+                <p class="mindset-text">Редкий, точный трештолк бьёт сильнее чем поток слов. Выбирай момент — один раз и
+                    в цель.</p>
+            </div>
+            <div class="mindset-card">
+                <span class="mindset-icon">🪞</span>
+                <h3 class="mindset-title">ЗЕРКАЛО</h3>
+                <p class="mindset-text">Будь готов получить в ответ. Если не готов — молчи. Уважай игру с обеих сторон.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <span class="footer-brand">TRASH TALK</span>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <span class="footer-note">GUIDELINE V1 / 2026 / FOR EDUCATIONAL USE</span>
+            <span style="font-size:10px; letter-spacing:3px; color:#333; text-transform:uppercase;">Author — <span
+                    style="color:var(--accent);">Denis Tsarkov</span></span>
+        </div>
+        <span class="footer-note">© 2026</span>
+    </footer>
+
+    <script>
+        // Intersection Observer для анимаций
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.rule-card, .target-card, .mindset-card, .spectrum-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+
+        // Cursor trail effect
+        let lastX = 0, lastY = 0;
+        document.addEventListener('mousemove', (e) => {
+            if (Math.abs(e.clientX - lastX) > 40 || Math.abs(e.clientY - lastY) > 40) {
+                const dot = document.createElement('div');
+                dot.style.cssText = `
+        position: fixed;
+        width: 4px; height: 4px;
+        background: #ff3333;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9998;
+        left: ${e.clientX}px;
+        top: ${e.clientY}px;
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      `;
+                document.body.appendChild(dot);
+                requestAnimationFrame(() => {
+                    dot.style.opacity = '0';
+                    dot.style.transform = 'scale(3)';
+                });
+                setTimeout(() => dot.remove(), 900);
+                lastX = e.clientX; lastY = e.clientY;
+            }
+        });
+    </script>
+</body>
+
+</html>
