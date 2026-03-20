@@ -377,6 +377,107 @@
                 font-size: 12px;
             }
         }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 2001;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active .modal-content {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 2002;
+        }
+
+        .modal-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 28px;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 0;
+        }
+
+        .modal-close:hover {
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .guide-section {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .guide-section:last-child {
+            border-bottom: none;
+        }
+
+        .guide-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            color: var(--accent);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .guide-text {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.6;
+        }
     </style>
 </head>
 
@@ -429,7 +530,7 @@
         <!-- BUTTONS -->
         <div class="button-group">
             <button id="next-btn" class="hidden">Дальше →</button>
-            <a href="index.html" class="guide-btn">Справочник</a>
+            <button class="guide-btn" onclick="openModal()">Справочник</button>
         </div>
     </div>
 
@@ -438,10 +539,97 @@
         TRASH TALK LEARNING GAME / 2026
     </footer>
 
+    <!-- MODAL GUIDELINE -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Справочник</div>
+                <button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="guide-section">
+                    <div class="guide-title">01 / Спектр трештока</div>
+                    <div class="guide-text">
+                        <strong>5 уровней интенсивности:</strong><br>
+                        1️⃣ Психологический — давление без слов<br>
+                        2️⃣ Лёгкий джаб — комплимент наоборот<br>
+                        3️⃣ Провокация — атака на стиль игры<br>
+                        4️⃣ Агрессия — прямой вызов<br>
+                        5️⃣ Ядерный — последний аргумент
+                    </div>
+                </div>
+                <div class="guide-section">
+                    <div class="guide-title">02 / Код трештока</div>
+                    <div class="guide-text">
+                        ✓ Атакуй игру, не человека<br>
+                        ✗ Никаких переходов на личное<br>
+                        ✓ Используй факты и статистику<br>
+                        ◈ Читай момент<br>
+                        ✓ Будь готов подтвердить делом<br>
+                        ✗ Не реагируй на каждый укол
+                    </div>
+                </div>
+                <div class="guide-section">
+                    <div class="guide-title">03 / Точки удара</div>
+                    <div class="guide-text">
+                        🎯 Уверенность — самая чувствительная<br>
+                        🔄 Паттерны — повторяющиеся ошибки<br>
+                        ⏱️ Давление времени<br>
+                        📊 История — прошлые проигрыши<br>
+                        👥 Репутация — чужие ожидания<br>
+                        🧠 Стресс-точки — индивидуальные слабости
+                    </div>
+                </div>
+                <div class="guide-section">
+                    <div class="guide-title">04 / Тайминг</div>
+                    <div class="guide-text">
+                        ✓ После его ошибки — идеально<br>
+                        ✓ До начала игры — сильно<br>
+                        ◈ Во время паузы — хорошо<br>
+                        ⚠️ Когда он на подъёме — рискованно<br>
+                        ✗ После своей ошибки — опасно<br>
+                        ✗ Без повода — никогда
+                    </div>
+                </div>
+                <div class="guide-section">
+                    <div class="guide-title">06 / Майндсет</div>
+                    <div class="guide-text">
+                        🧊 Холод — спокойствие это сила<br>
+                        🎭 Театр — перформанс имеет значение<br>
+                        ⚡ Экономия — редкий удар эффективнее<br>
+                        🪞 Зеркало — будь готов к ответу
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- SCRIPTS -->
     <script src="data.js"></script>
     <script src="storage.js"></script>
     <script src="game.js"></script>
+    <script>
+        // Modal functions
+        function openModal() {
+            document.getElementById('modal-overlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close modal on background click
+        document.getElementById('modal-overlay').addEventListener('click', (e) => {
+            if (e.target.id === 'modal-overlay') closeModal();
+        });
+    </script>
 </body>
 
 </html>
