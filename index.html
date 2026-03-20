@@ -471,13 +471,8 @@
         .timing-bar {
             height: 100%;
             border-radius: 3px;
-            animation: grow 1.2s ease both;
-        }
-
-        @keyframes grow {
-            from {
-                width: 0;
-            }
+            width: 0;
+            transition: width 1.2s ease;
         }
 
         .timing-badge {
@@ -985,6 +980,28 @@
             el.style.transform = 'translateY(20px)';
             el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             observer.observe(el);
+        });
+
+        // Timing bars — animate width on scroll
+        const timingObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bar = entry.target.querySelector('.timing-bar');
+                    if (bar) {
+                        bar.style.width = bar.dataset.width;
+                    }
+                    timingObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        document.querySelectorAll('.timing-row').forEach(row => {
+            const bar = row.querySelector('.timing-bar');
+            if (bar) {
+                bar.dataset.width = bar.style.width;
+                bar.style.width = '0';
+            }
+            timingObserver.observe(row);
         });
 
         // Cursor trail effect
